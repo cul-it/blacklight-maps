@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "exports": {
     ".": "./app/javascript/blacklight-maps/index.js",
-    "./*": "./app/javascript/blacklight-maps/*"
+    "./*": "./app/javascript/blacklight-maps/*.js"
   },
   "dependencies": {
     "leaflet": "^1.9.4",

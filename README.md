@@ -196,6 +196,7 @@ The table below indicates which versions of Blacklight Maps are compatible with 
 
 Blacklight Maps version | works with Blacklight version
 ----------------------- | ---------------------
+2.0.* | >=8.0, < 9
 1.2.* | >= 7.35.0, < 8
 1.1.* | >= 7.8.0, < 8
 0.5.* | >= 6.1.0, < 7

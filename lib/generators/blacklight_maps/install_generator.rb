@@ -8,6 +8,9 @@ module BlacklightMaps
 
     desc 'Install Blacklight-Maps'
 
+    LEAFLET_VERSION = '1.9.4'
+    MARKERCLUSTER_VERSION = '1.5.3'
+
     def verify_blacklight_installed
       return if IO.read('app/controllers/application_controller.rb').include?('include Blacklight::Controller')
 
@@ -15,17 +18,42 @@ module BlacklightMaps
       generate 'blacklight:install'
     end
 
-    def assets
-      copy_file 'blacklight_maps.css.scss', 'app/assets/stylesheets/blacklight_maps.css.scss'
-      return if IO.read('app/assets/javascripts/application.js').include?('blacklight-maps')
+    def add_javascript
+      if using_importmaps?
+        append_to_file 'app/javascript/application.js' do
+          <<~JS
 
-      marker = '//= require blacklight/blacklight'
-      insert_into_file 'app/assets/javascripts/application.js', after: marker do
-        "\n// Required by BlacklightMaps" \
-        "\n//= require blacklight-maps"
+            import BlacklightMaps from "blacklight-maps"
+            new BlacklightMaps().connect()
+          JS
+        end
+        say_status('info', 'Added BlacklightMaps import to app/javascript/application.js', :green)
+      elsif using_jsbundling?
+        yarn_add_blacklight_maps
+        append_to_file 'app/javascript/application.js' do
+          <<~JS
+
+            import BlacklightMaps from "blacklight-maps"
+            new BlacklightMaps().connect()
+          JS
+        end
+        say_status('info', 'Added blacklight-maps npm package and import to app/javascript/application.js', :green)
+      else
+        say_status('warning', 'Could not detect importmap-rails or a package.json. Add BlacklightMaps JS manually.', :yellow)
       end
-      append_to_file 'config/initializers/assets.rb',
-                     "\nRails.application.config.assets.paths << Rails.root.join('vendor', 'assets', 'images')\n"
+    end
+
+    def add_stylesheet
+      main_scss = %w[
+        app/assets/stylesheets/application.bootstrap.scss
+        app/assets/stylesheets/application.scss
+      ].find { |f| File.exist?(f) }
+
+      return say_status('warning', 'Could not find main SCSS file. Add Leaflet CSS and blacklight-maps styles manually.', :yellow) unless main_scss
+
+      yarn_add_blacklight_maps
+      prepend_to_file(main_scss) { leaflet_cdn_imports }
+      append_to_file main_scss, "\n@import \"blacklight-maps/app/assets/stylesheets/blacklight_maps/default\";\n"
     end
 
     def inject_search_builder
@@ -63,6 +91,36 @@ module BlacklightMaps
                        after: %r{<copyField source="title_tsim" dest="title_spell"/>} do
         "\n  <copyField source=\"coordinates_srpt\" dest=\"coordinates_ssim\" />\n"
       end
+    end
+
+    private
+
+    def using_importmaps?
+      defined?(Importmap) && File.exist?('config/importmap.rb')
+    end
+
+    def using_jsbundling?
+      File.exist?('package.json')
+    end
+
+    def yarn_add_blacklight_maps
+      if ENV['CI'] || test_app?
+        run "yarn add file:#{Blacklight::Maps::Engine.root}"
+      else
+        run "yarn add blacklight-maps@#{BlacklightMaps::VERSION}"
+      end
+    end
+
+    def test_app?
+      Rails.application.class.name == 'Internal::Application' # rubocop:disable Style/ClassEqualityComparison
+    end
+
+    def leaflet_cdn_imports
+      <<~SCSS
+        @import url("https://cdn.jsdelivr.net/npm/leaflet@#{LEAFLET_VERSION}/dist/leaflet.css");
+        @import url("https://cdn.jsdelivr.net/npm/leaflet.markercluster@#{MARKERCLUSTER_VERSION}/dist/MarkerCluster.css");
+        @import url("https://cdn.jsdelivr.net/npm/leaflet.markercluster@#{MARKERCLUSTER_VERSION}/dist/MarkerCluster.Default.css");
+      SCSS
     end
   end
 end

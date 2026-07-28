@@ -9,6 +9,13 @@ describe 'catalog#index map view', :js do
       # use geojson facet for blacklight-maps catalog#index map view specs
       config.add_facet_field 'geojson_ssim', limit: -2, label: 'GeoJSON', show: false
       config.add_facet_field 'subject_geo_ssim', label: 'Region'
+      config.add_facet_field 'coordinates',
+                             filter_class: BlacklightMaps::CoordinatesFilterField,
+                             filter_query_builder: BlacklightMaps::SpatialFilterQuery,
+                             item_presenter: BlacklightMaps::SpatialItemPresenter,
+                             show: false,
+                             include_in_request: false,
+                             label: 'Spatial Search'
       config.add_facet_fields_to_solr_request!
     end
     visit search_catalog_path q: 'korea', view: 'maps'
@@ -47,11 +54,11 @@ describe 'catalog#index map view', :js do
     let(:tileurl) { CatalogController.blacklight_config.view.maps.tileurl }
 
     it 'has maxzoom value from config' do
-      expect(page).to have_selector("#blacklight-index-map[data-maxzoom='#{maxzoom}']")
+      expect(page).to have_selector("#blacklight-index-map[data-blacklight-maps-leaflet-maxzoom-value='#{maxzoom}']")
     end
 
     it 'has tileurl value from config' do
-      expect(page).to have_selector("#blacklight-index-map[data-tileurl='#{tileurl}']")
+      expect(page).to have_selector("#blacklight-index-map[data-blacklight-maps-leaflet-tileurl-value='#{tileurl}']")
     end
   end
 
@@ -98,7 +105,7 @@ describe 'catalog#index map view', :js do
       end
 
       it 'uses the default view type' do
-        expect(current_url).to include('view=list')
+        expect(page).to have_current_path(/view=list/)
       end
     end
   end
@@ -120,8 +127,8 @@ describe 'catalog#index map view', :js do
       before { find('.search-control').click }
 
       it 'runs a new search' do
-        expect(page).to have_selector('.constraint.coordinates')
-        expect(current_url).to include('view=list')
+        expect(page).to have_selector('.constraint.filter-coordinates')
+        expect(page).to have_current_path(/view=list/)
       end
     end
   end

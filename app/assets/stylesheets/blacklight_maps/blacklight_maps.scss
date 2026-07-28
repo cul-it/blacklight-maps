@@ -1,0 +1,56 @@
+body.blacklight-catalog-map #map_leader_text {
+  margin-bottom: 10px;
+}
+
+body.blacklight-catalog-map .view-type {
+  display: none;
+}
+
+#sortAndPerPage .page-links .mapped-count {
+  margin-left: 10px;
+  color: dimgray;
+}
+
+#sortAndPerPage .page-links .mapped-caveat {
+  margin-left: 10px;
+  font-size: 12px;
+  color: darkgray;
+}
+
+#documents #blacklight-index-map {
+  height: 550px;
+  margin: 10px 0;
+}
+
+#documents #blacklight-index-map ~ div.record-padding nav.pagination {
+  display: none;
+}
+
+#document #blacklight-show-map {
+  height: 300px;
+}
+
+.mapped-count .badge {
+  vertical-align: text-bottom;
+}
+
+a.leaflet-bar-part.search-control {
+  cursor: pointer;
+}
+
+a.leaflet-bar-part.search-control:before {
+  content: "\1F50D";
+}
+
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: 991px) {
+  #sortAndPerPage .page_links {
+    width: 75%;
+    padding: 0 12px 0 0;
+  }
+
+  #sortAndPerPage .page_links .mapped-caveat {
+    margin-left: 0;
+    float: left;
+  }
+}

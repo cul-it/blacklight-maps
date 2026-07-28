@@ -4,10 +4,13 @@ require 'spec_helper'
 
 describe 'Initial map bounds view parameter', :js do
   before(:all) do
+    CatalogController.blacklight_config = Blacklight::Configuration.new
     CatalogController.configure_blacklight do |config|
       config.view.maps.facet_mode = 'coordinates'
       config.view.maps.coordinates_facet_field = 'coordinates_ssim'
+      config.add_facet_field 'format', label: 'Format'
       config.add_facet_field 'coordinates_ssim', limit: -2, label: 'Coordinates', show: false
+      config.add_facet_fields_to_solr_request!
     end
   end
 

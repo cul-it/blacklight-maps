@@ -10,6 +10,13 @@ describe 'catalog#map view', :js do
       config.view.maps.facet_mode = 'coordinates'
       config.view.maps.coordinates_facet_field = 'coordinates_ssim'
       config.add_facet_field 'coordinates_ssim', limit: -2, label: 'Coordinates', show: false
+      config.add_facet_field :coordinates,
+                             filter_class: BlacklightMaps::CoordinatesFilterField,
+                             filter_query_builder: BlacklightMaps::SpatialFilterQuery,
+                             item_presenter: BlacklightMaps::SpatialItemPresenter,
+                             show: false,
+                             include_in_request: false,
+                             label: 'Spatial Search'
       config.add_facet_fields_to_solr_request!
     end
     visit map_path
@@ -43,7 +50,7 @@ describe 'catalog#map view', :js do
 
       it 'runs a new search' do
         expect(page).to have_selector('.constraint-value .filter-value', text: '35.86166,104.195397')
-        expect(current_url).to include('view=list')
+        expect(page).to have_current_path(/view=list/)
       end
     end
   end

@@ -57,7 +57,8 @@ module BlacklightMaps
 
       return say_status('warning', 'Could not find main stylesheet. Add Leaflet CSS and blacklight-maps styles manually.', :yellow) unless main_css
 
-      append_to_file(main_css) { leaflet_css_imports }
+      prepend_to_file(main_css, leaflet_url_imports) unless File.read(main_css).include?('leaflet.css')
+      append_to_file(main_css) { blacklight_maps_import } unless File.read(main_css).include?('blacklight-maps')
     end
 
     def build_assets
@@ -95,11 +96,16 @@ module BlacklightMaps
       File.exist?('package.json') && !using_importmaps?
     end
 
-    def leaflet_css_imports
+    def leaflet_url_imports
       <<~CSS
         @import url("https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css");
         @import url("https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css");
         @import url("https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css");
+      CSS
+    end
+
+    def blacklight_maps_import
+      <<~CSS
         @import "blacklight-maps/app/assets/stylesheets/blacklight_maps/blacklight_maps";
       CSS
     end

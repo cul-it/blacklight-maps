@@ -106,7 +106,7 @@ module BlacklightMaps
 
     def blacklight_maps_import
       <<~CSS
-        @import "blacklight-maps/app/assets/stylesheets/blacklight_maps/blacklight_maps";
+        @import "blacklight-maps/app/assets/stylesheets/blacklight_maps/blacklight-maps";
       CSS
     end
 

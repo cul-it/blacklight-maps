@@ -15,11 +15,12 @@ jobs:
         ruby: ["3.3", "3.4"]
         rails_version: ["~> 8.0.0", "~> 8.1.0"]
         blacklight_version: ["~> 8.0"]
+        additional_name: ["importmaps", "esbuild"]
         include:
-          - additional_engine_cart_rails_options: "-a propshaft --css=bootstrap --javascript=importmap"
-            additional_name: "importmaps"
-          - additional_engine_cart_rails_options: "-a propshaft --css=bootstrap --javascript=esbuild"
-            additional_name: "esbuild"
+          - additional_name: "importmaps"
+            additional_engine_cart_rails_options: "-a propshaft --css=bootstrap --javascript=importmap"
+          - additional_name: "esbuild"
+            additional_engine_cart_rails_options: "-a propshaft --css=bootstrap --javascript=esbuild"
     env:
       RAILS_VERSION: ${{ matrix.rails_version }}
       BLACKLIGHT_VERSION: ${{ matrix.blacklight_version }}
@@ -30,7 +31,6 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler: latest
       - name: Install dependencies
         run: bundle install
       - name: Run tests

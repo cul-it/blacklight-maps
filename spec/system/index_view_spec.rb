@@ -3,21 +3,21 @@
 require 'spec_helper'
 
 describe 'catalog#index map view', :js do
-  before do
-    CatalogController.blacklight_config = Blacklight::Configuration.new
-    CatalogController.configure_blacklight do |config|
-      # use geojson facet for blacklight-maps catalog#index map view specs
-      config.add_facet_field 'geojson_ssim', limit: -2, label: 'GeoJSON', show: false
-      config.add_facet_field 'subject_geo_ssim', label: 'Region'
-      config.add_facet_field 'coordinates',
-                             filter_class: BlacklightMaps::CoordinatesFilterField,
-                             filter_query_builder: BlacklightMaps::SpatialFilterQuery,
-                             item_presenter: BlacklightMaps::SpatialItemPresenter,
-                             show: false,
-                             include_in_request: false,
-                             label: 'Spatial Search'
-      config.add_facet_fields_to_solr_request!
+  around do |example|
+    original_config = CatalogController.blacklight_config
+    begin
+      CatalogController.blacklight_config = original_config.deep_copy
+      CatalogController.configure_blacklight do |config|
+        # use geojson facet for blacklight-maps catalog#index map view specs
+        config.add_facet_field 'geojson_ssim', limit: -1, label: 'GeoJSON', show: false
+      end
+      example.run
+    ensure
+      CatalogController.blacklight_config = original_config
     end
+  end
+
+  before do
     visit search_catalog_path q: 'korea', view: 'maps'
   end
 

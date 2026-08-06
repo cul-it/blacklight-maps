@@ -122,7 +122,7 @@ Blacklight-Maps expects you to provide these configuration options:
 
 In addition, you must add the geospatial facet field to the list of facet fields in `app/controllers/catalog_controller.rb`, for example:
 ```ruby
-config.add_facet_field 'geojson_ssim', limit: -2, label: 'Coordinates', show: false
+config.add_facet_field 'geojson_ssim', limit: -1, label: 'Coordinates', show: false
 ```
 
 #### Optional
@@ -153,7 +153,7 @@ All of these options can easily be configured in `CatalogController.rb` in the `
     config.view.maps.maxzoom = 18
     config.view.maps.show_initial_zoom = 5
 
-    config.add_facet_field 'geojson', limit: -2, label: 'Coordinates', show: false
+    config.add_facet_field 'geojson', limit: -1, label: 'Coordinates', show: false
 ...
 
 ```

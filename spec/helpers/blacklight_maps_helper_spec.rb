@@ -24,7 +24,7 @@ describe BlacklightMapsHelper do
     allow(helper).to receive_messages(blacklight_config: blacklight_config)
     allow(helper).to receive_messages(blacklight_configuration_context: Blacklight::Configuration::Context.new(mock_controller))
     allow(helper).to receive(:search_state).and_return Blacklight::SearchState.new({}, blacklight_config, mock_controller)
-    blacklight_config.add_facet_field 'geojson_ssim', limit: -2, label: 'GeoJSON', show: false
+    blacklight_config.add_facet_field 'geojson_ssim', limit: -1, label: 'GeoJSON', show: false
     blacklight_config.add_facet_fields_to_solr_request!
   end
 

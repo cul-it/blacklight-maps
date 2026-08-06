@@ -9,6 +9,7 @@
     "./*": "./app/javascript/blacklight-maps/*.js"
   },
   "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3"
   }

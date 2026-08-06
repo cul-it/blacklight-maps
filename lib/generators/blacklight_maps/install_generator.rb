@@ -75,6 +75,20 @@ module BlacklightMaps
       end
     end
 
+    def add_coordinates_facet_field
+      inject_into_file 'app/controllers/catalog_controller.rb',
+                       after: /configure_blacklight do \|config\|.*$/ do
+        "\n" \
+        "    config.add_facet_field :coordinates,\n" \
+        "                           filter_class: BlacklightMaps::CoordinatesFilterField,\n" \
+        "                           filter_query_builder: BlacklightMaps::SpatialFilterQuery,\n" \
+        "                           item_presenter: BlacklightMaps::SpatialItemPresenter,\n" \
+        "                           show: false,\n" \
+        "                           include_in_request: false,\n" \
+        "                           label: 'Spatial Search'\n"
+      end
+    end
+
     # TODO: inject Solr configuration (if needed)
     def inject_solr_configuration
       target_file = 'solr/conf/schema.xml'
